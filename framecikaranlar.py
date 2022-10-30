@@ -1,42 +1,47 @@
 import os
 import cv2
 
-video_path = 'C:/Users/yagmur.kaya/PycharmProjects/ygmr_tez/Framextract2folder/inputP'
 
-output_path = 'C:/Users/yagmur.kaya/PycharmProjects/ygmr_tez/Framextract2folder/outputP'
+dirs = ["doga","haber","muzik","spor"]
+root_path= r'C:\Users\yagmur.kaya\PycharmProjects\ygmr_tez\Framextract2folder\ornek_dosyalar/'
 
-input_file_list = os.listdir(video_path)
-print("input_file_list listele: ", *input_file_list, sep="\n")
+output_path = r'C:\Users\yagmur.kaya\PycharmProjects\ygmr_tez\Framextract2folder\outputP'
+
+
 sep = '.'
+for d in dirs:
+    video_path = root_path + d
+    print(">> ", video_path)
 
-for i in input_file_list:
-    print("her bir klasör adı:", i)
-    klasor_isim = i.split(sep, 1)[0]
-    print("klasör ismi .dan ayrılmış hali:", klasor_isim)
-    yeni_path = os.path.join(output_path, klasor_isim)
-    print("image isminden oluşan yeni/son dosya yolu: ", yeni_path)
-   # os.mkdir(yeni_path)
-    if not os.path.exists(yeni_path):
-        os.mkdir(yeni_path)
-    else:
-        print("Klasör zaten var, oluşturmaya gerek yok")
+    input_file_list = os.listdir(video_path)
 
-    yolyolu = os.path.join(video_path, i)
-    print("input yolu:", yolyolu)
-    cap = cv2.VideoCapture(yolyolu)
-    index = 0
+    for file in input_file_list:
+        print(">>> ", file)
+        klasor_isim = file.split(sep, 1)[0]
+        print("klasör ismi .dan ayrılmış hali:", klasor_isim)
+        yeni_path = os.path.join(output_path, d,  klasor_isim)
+        print("image isminden oluşan yeni/son klasor yolu: ", yeni_path)
+        if not os.path.isdir(yeni_path):
+            os.mkdir(yeni_path)
 
-    while cap.isOpened():
-        Ret, frame = cap.read()
-
-        if Ret:
-            index += 1
-            if index % 24 != 0:
-                continue
-            cv2.imwrite(yeni_path + '/' + 'Frame_' + str(index) + '.png', frame)
-        else:
-            break
-    cap.release()
+        video_yolu = os.path.join(video_path, file)
+        print("video_yolu", video_yolu)
 
 
+        cap = cv2.VideoCapture(video_yolu)
+        index = 0
 
+        while cap.isOpened():
+            Ret, frame = cap.read()
+
+            if Ret:
+                index += 1
+                if index % 24 != 0:
+                    continue
+                frame_path = yeni_path + '/' + 'Frame_' + str(index) + '.png'
+                print(frame_path)
+                cv2.imwrite(frame_path, frame)
+            else:
+                break
+
+        cap.release()
